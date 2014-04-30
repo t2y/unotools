@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import argparse
+import logging
 
 try:
     from functools import singledispatch
@@ -52,3 +54,31 @@ def connect_with_pipe(pipe, **kwargs):
 def connect_with_socket(socket, **kwargs):
     identifier = 'socket,host={},port={}'.format(socket.host, socket.port)
     return connect(identifier, **kwargs)
+
+
+def parse_argument(argv):
+    """
+    >>> argv = '-s server -p 8080 -o tcpNoDelay=1'.split()
+    >>> parse_argument(argv)  # doctest: +NORMALIZE_WHITESPACE
+    Namespace(host='server', option='tcpNoDelay=1', pipe=None, port=8080,
+              verbose=False)
+    """
+    parser = argparse.ArgumentParser()
+    parser.set_defaults(host='localhost', option=None, pipe=None, port=8100,
+                        verbose=False)
+    parser.add_argument('-i', '--pipe', dest='pipe',
+                        metavar='PIPE', help='set pipe name')
+    parser.add_argument('-o', '--option', dest='option',
+                        metavar='OPTION', help='set option')
+    parser.add_argument('-p', '--port', dest='port', type=int,
+                        metavar='PORT_NUMBER', help='set port number')
+    parser.add_argument('-s', '--host', dest='host',
+                        metavar='HOST', help='set host name')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='set verbose mode')
+    args = parser.parse_args(argv)
+
+    if args.verbose:
+        logging.root.setLevel(logging.DEBUG)
+    logging.debug('args: {0}'.format(args))
+    return args
