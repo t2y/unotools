@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from setuptools import setup
 
 
@@ -12,6 +13,10 @@ try:
     ])
 except (IOError, ImportError):
     LONG_DESCRIPTION = ''
+
+REQUIRES = []
+if sys.version_info < (3, 4):
+    REQUIRES.append('singledispatch')
 
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
@@ -36,6 +41,6 @@ setup(
     license='Apache License 2.0',
     platforms=['unix', 'linux', 'osx'],
     packages=['unotools'],
-    #install_requires=['uno', 'pyuno'],
+    install_requires=REQUIRES,
     tests_require=['tox', 'pytest', 'pytest-pep8'],
 )

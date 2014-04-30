@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 import functools
+from os.path import realpath
+
+import uno
+import pyuno
 
 
 def cached_property(func):
@@ -19,7 +23,16 @@ def set_kwargs(obj, kwargs):
 
 
 def convert_path_to_url(path):
-    if len(path) > 1:
-        if path[1:2] == ':':
-            path = '/' + path[0] + '|' + path[2:]
-    return 'file://' + path.replace('\\', '/')
+    """
+    >>> convert_path_to_url('/var/tmp/libreoffice')
+    'file:///var/tmp/libreoffice'
+    """
+    return pyuno.systemPathToFileUrl(realpath(path))
+
+
+def convert_url_to_path(url):
+    """
+    >>> convert_url_to_path('file:///var/tmp/libreoffice')
+    '/var/tmp/libreoffice'
+    """
+    return pyuno.fileUrlToSystemPath(url)
