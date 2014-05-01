@@ -9,8 +9,9 @@ class Calc:
     def __init__(self, context, target_frame_name='_blank', search_flags=0,
                  arguments=()):
         self.context = context
-        self.component = context.load_component_from_url(Calc.URL,
-                            target_frame_name, search_flags, arguments)
+        loader = context.load_component_from_url
+        self.component = loader(Calc.URL, target_frame_name, search_flags,
+                                arguments)
 
     def close(self):
         self.component.close(True)
