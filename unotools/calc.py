@@ -1,29 +1,22 @@
 # -*- coding: utf-8 -*-
-from unotools.datatypes import Sequence
+from operator import methodcaller
+
+from unotools.component import Component
 
 
-class Calc:
+class Calc(Component):
 
     URL = 'private:factory/scalc'
 
-    def __init__(self, context, target_frame_name='_blank', search_flags=0,
-                 arguments=()):
-        self.context = context
-        loader = context.load_component_from_url
-        self.component = loader(Calc.URL, target_frame_name, search_flags,
-                                arguments)
-
-    def close(self):
-        self.component.close(True)
-
+    # sheets operation
     @property
     def sheets(self):
         return self.component.getSheets()
 
-    def get_sheets_by_index(self, index):
+    def get_sheets_by_index(self, index: int):
         return self.sheets.getByIndex(index)
 
-    def get_sheets_by_name(self, name):
+    def get_sheets_by_name(self, name: str):
         return self.sheets.getByName(name)
 
     def get_sheets_count(self):
@@ -32,14 +25,41 @@ class Calc:
     def get_number_formats(self):
         return self.component.getNumberFormats()
 
-    def store_as_url(self, url, *values):
-        self.component.storeAsURL(url, self._get_property_values(*values))
+    def insert_sheets_new_by_name(self, name: str, position: int):
+        self.sheets.insertNewByName(name, position)
 
-    def store_to_url(self, url, *values):
-        self.component.storeToURL(url, self._get_property_values(*values))
+    def insert_multisheets_new_by_name(self, data: list, position: int):
+        for i, datum in enumerate(data):
+            self.insert_sheets_new_by_name(datum, position + i)
 
-    def _get_property_values(self, *values):
-        if len(values) == 1 and values[0] is None:
-            return Sequence()
-        else:
-            return Sequence(self.context.make_property_value(*values))
+    def remove_sheets_by_name(self, name: str):
+        self.sheets.removeByName(name)
+
+    # a sheet operation
+    def _set_cell_data(self, sheet, x, y, data, method_name, is_rows):
+        for datum in data:
+            methodcaller(method_name, datum)(sheet.getCellByPosition(x, y))
+            if is_rows:
+                y += 1
+            else:
+                x += 1
+
+    def set_rows_str(self, sheet, x, y, data):
+        self._set_cell_data(sheet, x, y, data, 'setString', True)
+
+    def set_columns_str(self, sheet, x, y, data):
+        self._set_cell_data(sheet, x, y, data, 'setString', False)
+
+    def set_rows_value(self, sheet, x, y, data):
+        self._set_cell_data(sheet, x, y, data, 'setValue', True)
+
+    def set_columns_value(self, sheet, x, y, data):
+        self._set_cell_data(sheet, x, y, data, 'setValue', False)
+
+    def set_rows_formula(self, sheet, x, y, data):
+        self._set_cell_data(sheet, x, y, data, 'setFormula', True)
+
+    def set_columns_formula(self, sheet, x, y, data):
+        self._set_cell_data(sheet, x, y, data, 'setFormula', False)
+
+    # charts operation

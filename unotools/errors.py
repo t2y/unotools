@@ -7,3 +7,7 @@ class UnotoolsError(Exception):
 
 class ConnectionError(UnotoolsError):
     pass
+
+
+class ArgumentError(UnotoolsError):
+    pass

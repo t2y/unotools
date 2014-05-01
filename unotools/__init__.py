@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import logging
+from os.path import isdir
 
 try:
     from functools import singledispatch
@@ -12,7 +13,7 @@ import unohelper
 from com.sun.star.script.provider import XScriptContext
 
 from unotools.context import LocalContext, ScriptContext
-from unotools.errors import ConnectionError
+from unotools.errors import ArgumentError, ConnectionError
 
 
 class Pipe:
@@ -58,25 +59,34 @@ def connect_with_socket(socket, **kwargs):
 
 def parse_argument(argv):
     """
-    >>> argv = '-s server -p 8080 -o tcpNoDelay=1'.split()
+    >>> argv = '-s server -p 8080 -o tcpNoDelay=1 -l .'.split()
     >>> parse_argument(argv)  # doctest: +NORMALIZE_WHITESPACE
-    Namespace(host='server', option='tcpNoDelay=1', pipe=None, port=8080,
-              verbose=False)
+    Namespace(encoding='utf-8', host='server', logdir='.',
+              option='tcpNoDelay=1', pipe=None, port=8080, verbose=False)
     """
     parser = argparse.ArgumentParser()
-    parser.set_defaults(host='localhost', option=None, pipe=None, port=8100,
-                        verbose=False)
+    parser.set_defaults(encoding='utf-8', host='localhost', logdir=None,
+                        option=None, pipe=None, port=8100, verbose=False)
+    parser.add_argument('-e', '--encoding', dest='encoding',
+                        metavar='ENCODING',
+                        help='set encoding. default is utf-8')
     parser.add_argument('-i', '--pipe', dest='pipe',
                         metavar='PIPE', help='set pipe name')
+    parser.add_argument('-l', '--logdir', dest='logdir', required=True,
+                        metavar='LOGDIR', help='set log directory')
     parser.add_argument('-o', '--option', dest='option',
                         metavar='OPTION', help='set option')
     parser.add_argument('-p', '--port', dest='port', type=int,
                         metavar='PORT_NUMBER', help='set port number')
-    parser.add_argument('-s', '--host', dest='host',
+    parser.add_argument('-s', '--host', dest='host', required=True,
                         metavar='HOST', help='set host name')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='set verbose mode')
     args = parser.parse_args(argv)
+
+    if not isdir(args.logdir):
+        msg = 'Log directory is not found: {}'.format(args.logdir)
+        raise ArgumentError(msg)
 
     if args.verbose:
         logging.root.setLevel(logging.DEBUG)

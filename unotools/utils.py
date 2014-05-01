@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import functools
-from os.path import realpath
+import io
+import os
+from os.path import join as pathjoin, realpath
 
 import uno
 import pyuno
@@ -20,6 +22,18 @@ def set_kwargs(obj, kwargs):
     for key, value in kwargs.items():
         if value is not None:
             setattr(obj, key.title(), value)
+
+
+def get_file_list(path):
+    for root, dirs, files in os.walk(path):
+        for filename in files:
+            yield pathjoin(root, filename)
+
+
+def read_file(path, mode='r', encoding='utf-8'):
+    with io.open(path, mode=mode, encoding=encoding) as f:
+        for line in f:
+            yield line.strip()
 
 
 def convert_path_to_url(path):
