@@ -34,8 +34,28 @@ class LocalContext(unohelper.Base):
     def core_reflection(self):
         return self.create_instance('com.sun.star.reflection.CoreReflection')
 
-    def load_component_from_url(url, properties=()):
-        return self.desktop.loadComponentFromURL(url, '_blank', 0, properties)
+    def load_component_from_url(self, url: str, target_frame_name: str,
+                                search_flags: int, arguments: tuple=()):
+        """
+        url:
+            'private:factory/swriter', 'private:factory/scalc', etc ...
+
+        target_frame_name:
+            '_blank': always creates a new frame
+            '_default': special UI functionality
+                (e.g. detecting of already loaded documents, using of
+                      empty frames of creating of new top frames as fallback)
+            '_self', ''(!):  means frame himself
+            '_parent': address direct parent of frame
+            '_top': indicates top frame of current path in tree
+            '_beamer': means special sub frame
+
+        search_flag:
+            0: Auto, 1: Parent, 2: Self, 4: Children, 8: Create,
+            16: Siblings, 32: Tasks, 23: All, 55: Global
+        """
+        return self.desktop.loadComponentFromURL(url, target_frame_name,
+                                                 search_flags, arguments)
 
     def create_instance(self, name: str):
         return self.service_manager.createInstance(name)
