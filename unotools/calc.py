@@ -36,6 +36,16 @@ class Calc(Component):
         self.sheets.removeByName(name)
 
     # a sheet operation
+    def set_rows(self, sheet, x, y, data, method_names):
+        for i, datum in enumerate(data):
+            self.set_rows_cell_data(sheet, x, y, [datum], method_names[i])
+            x += 1
+
+    def set_columns(self, sheet, x, y, data, method_names):
+        for i, datum in enumerate(data):
+            self.set_rows_cell_data(sheet, x, y, [datum], method_names[i])
+            y += 1
+
     def set_rows_cell_data(self, sheet, x, y, data, method_name):
         for datum in data:
             methodcaller(method_name, datum)(sheet.getCellByPosition(x, y))

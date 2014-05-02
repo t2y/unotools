@@ -3,7 +3,7 @@ import csv
 from os.path import basename
 
 
-class CsvData:
+class CsvFile:
 
     def __init__(self, path, mode='r', encoding='utf-8', has_header=False,
                  convert_func=lambda x: x):
@@ -15,7 +15,7 @@ class CsvData:
         self.has_header = has_header
         self.convert_func = convert_func
 
-    def read_file(self):
+    def read(self):
         with open(self.path, mode=self.mode, encoding=self.encoding) as f:
             reader = csv.reader(f)
             if self.has_header:
