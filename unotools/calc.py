@@ -74,4 +74,10 @@ class Calc(Component):
     def set_columns_formula(self, sheet, x, y, data):
         self.set_columns_cell_data(sheet, x, y, data, 'setFormula')
 
+    def get_cell_range_by_name(self, sheet, range_):
+        return sheet.getCellRangeByName(range_)
+
+    def get_cell_range_by_position(self, sheet, left, top, right, bottom):
+        return sheet.getCellRangeByPosition(left, top, right, bottom)
+
     # charts operation

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import functools
+import glob
 import os
 from os.path import join as pathjoin, realpath
 
@@ -27,6 +28,12 @@ def get_file_list(path):
     for root, dirs, files in os.walk(path):
         for filename in files:
             yield pathjoin(root, filename)
+
+
+def search_file(path, name):
+    for root, dirs, files in os.walk(path):
+        for file_path in glob.glob(os.path.join(root, name)):
+            yield file_path
 
 
 def convert_path_to_url(path):
