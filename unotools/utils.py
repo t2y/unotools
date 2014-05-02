@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import functools
-import io
 import os
 from os.path import join as pathjoin, realpath
 
@@ -28,12 +27,6 @@ def get_file_list(path):
     for root, dirs, files in os.walk(path):
         for filename in files:
             yield pathjoin(root, filename)
-
-
-def read_file(path, mode='r', encoding='utf-8'):
-    with io.open(path, mode=mode, encoding=encoding) as f:
-        for line in f:
-            yield line.strip()
 
 
 def convert_path_to_url(path):

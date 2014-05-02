@@ -36,30 +36,32 @@ class Calc(Component):
         self.sheets.removeByName(name)
 
     # a sheet operation
-    def _set_cell_data(self, sheet, x, y, data, method_name, is_rows):
+    def set_rows_cell_data(self, sheet, x, y, data, method_name):
         for datum in data:
             methodcaller(method_name, datum)(sheet.getCellByPosition(x, y))
-            if is_rows:
-                y += 1
-            else:
-                x += 1
+            y += 1
+
+    def set_columns_cell_data(self, sheet, x, y, data, method_name):
+        for datum in data:
+            methodcaller(method_name, datum)(sheet.getCellByPosition(x, y))
+            x += 1
 
     def set_rows_str(self, sheet, x, y, data):
-        self._set_cell_data(sheet, x, y, data, 'setString', True)
+        self.set_rows_cell_data(sheet, x, y, data, 'setString')
 
     def set_columns_str(self, sheet, x, y, data):
-        self._set_cell_data(sheet, x, y, data, 'setString', False)
+        self.set_columns_cell_data(sheet, x, y, data, 'setString')
 
     def set_rows_value(self, sheet, x, y, data):
-        self._set_cell_data(sheet, x, y, data, 'setValue', True)
+        self.set_rows_cell_data(sheet, x, y, data, 'setValue')
 
     def set_columns_value(self, sheet, x, y, data):
-        self._set_cell_data(sheet, x, y, data, 'setValue', False)
+        self.set_columns_cell_data(sheet, x, y, data, 'setValue')
 
     def set_rows_formula(self, sheet, x, y, data):
-        self._set_cell_data(sheet, x, y, data, 'setFormula', True)
+        self.set_rows_cell_data(sheet, x, y, data, 'setFormula')
 
     def set_columns_formula(self, sheet, x, y, data):
-        self._set_cell_data(sheet, x, y, data, 'setFormula', False)
+        self.set_columns_cell_data(sheet, x, y, data, 'setFormula')
 
     # charts operation

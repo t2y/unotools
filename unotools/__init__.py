@@ -59,21 +59,21 @@ def connect_with_socket(socket, **kwargs):
 
 def parse_argument(argv):
     """
-    >>> argv = '-s server -p 8080 -o tcpNoDelay=1 -l .'.split()
+    >>> argv = '-s server -p 8080 -o tcpNoDelay=1'.split()
     >>> parse_argument(argv)  # doctest: +NORMALIZE_WHITESPACE
-    Namespace(encoding='utf-8', host='server', logdir='.',
+    Namespace(datadir=None, encoding='utf-8', host='server',
               option='tcpNoDelay=1', pipe=None, port=8080, verbose=False)
     """
     parser = argparse.ArgumentParser()
-    parser.set_defaults(encoding='utf-8', host='localhost', logdir=None,
+    parser.set_defaults(encoding='utf-8', host='localhost', datadir=None,
                         option=None, pipe=None, port=8100, verbose=False)
+    parser.add_argument('-d', '--datadir', dest='datadir',
+                        metavar='DATADIR', help='set data directory')
     parser.add_argument('-e', '--encoding', dest='encoding',
                         metavar='ENCODING',
                         help='set encoding. default is utf-8')
     parser.add_argument('-i', '--pipe', dest='pipe',
                         metavar='PIPE', help='set pipe name')
-    parser.add_argument('-l', '--logdir', dest='logdir', required=True,
-                        metavar='LOGDIR', help='set log directory')
     parser.add_argument('-o', '--option', dest='option',
                         metavar='OPTION', help='set option')
     parser.add_argument('-p', '--port', dest='port', type=int,
@@ -84,8 +84,8 @@ def parse_argument(argv):
                         help='set verbose mode')
     args = parser.parse_args(argv)
 
-    if not isdir(args.logdir):
-        msg = 'Log directory is not found: {}'.format(args.logdir)
+    if args.datadir is not None and not isdir(args.datadir):
+        msg = 'Data directory is not found: {}'.format(args.datadir)
         raise ArgumentError(msg)
 
     if args.verbose:
