@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+from com.sun.star.uno import XComponentContext
+
 from unotools.datatypes import Sequence
 
 
 class Component:
 
-    def __init__(self, context, target_frame_name='_blank', search_flags=0,
-                 arguments=()):
+    def __init__(self, context: XComponentContext,
+                 target_frame_name: str='_blank',
+                 search_flags: int=0,
+                 arguments: tuple=()):
         self.context = context
         loader = context.load_component_from_url
         self.component = loader(self.URL, target_frame_name, search_flags,
@@ -14,10 +18,10 @@ class Component:
     def close(self):
         self.component.close(True)
 
-    def store_as_url(self, url, *values):
+    def store_as_url(self, url: str, *values):
         self.component.storeAsURL(url, self._get_property_values(*values))
 
-    def store_to_url(self, url, *values):
+    def store_to_url(self, url: str, *values):
         self.component.storeToURL(url, self._get_property_values(*values))
 
     def _get_property_values(self, *values):

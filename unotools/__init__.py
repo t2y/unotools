@@ -17,18 +17,18 @@ from unotools.errors import ArgumentError, ConnectionError
 
 
 class Pipe:
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
 
 
 class Socket:
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
 
 
 @singledispatch
-def connect(identifier, **kwargs):
+def connect(identifier: str, **kwargs) -> ScriptContext:
     context = None
     try:
         local_context = LocalContext()
@@ -47,17 +47,17 @@ def connect(identifier, **kwargs):
 
 
 @connect.register(Pipe)
-def connect_with_pipe(pipe, **kwargs):
+def connect_with_pipe(pipe: Pipe, **kwargs) -> ScriptContext:
     return connect('pipe,name={}'.format(pipe.name), **kwargs)
 
 
 @connect.register(Socket)
-def connect_with_socket(socket, **kwargs):
+def connect_with_socket(socket: Socket, **kwargs) -> ScriptContext:
     identifier = 'socket,host={},port={}'.format(socket.host, socket.port)
     return connect(identifier, **kwargs)
 
 
-def parse_argument(argv):
+def parse_argument(argv: list):
     """
     >>> argv = '-s server -p 8080 -o tcpNoDelay=1'.split()
     >>> parse_argument(argv)  # doctest: +NORMALIZE_WHITESPACE

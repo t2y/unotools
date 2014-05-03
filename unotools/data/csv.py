@@ -5,8 +5,8 @@ from os.path import basename
 
 class CsvFile:
 
-    def __init__(self, path, mode='r', encoding='utf-8', has_header=False,
-                 convert_func=lambda x: x):
+    def __init__(self, path: str, mode: str='r', encoding: str='utf-8',
+                 has_header: bool=False, convert_func: callable=lambda x: x):
         self.path = path
         self.file_name = basename(path)
         self.mode = mode
@@ -15,7 +15,7 @@ class CsvFile:
         self.has_header = has_header
         self.convert_func = convert_func
 
-    def read(self):
+    def read(self) -> list:
         with open(self.path, mode=self.mode, encoding=self.encoding) as f:
             reader = csv.reader(f)
             if self.has_header:
