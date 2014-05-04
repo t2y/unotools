@@ -3,7 +3,6 @@ from operator import methodcaller
 
 from com.sun.star.awt import Rectangle
 from com.sun.star.chart import XChartDocument
-from com.sun.star.chart import XDiagram
 from com.sun.star.sheet import XCellRangeAddressable
 from com.sun.star.sheet import XSpreadsheet
 from com.sun.star.sheet import XSpreadsheets
@@ -11,7 +10,6 @@ from com.sun.star.table import CellRangeAddress
 from com.sun.star.table import XCellRange
 from com.sun.star.table import XTableChart
 from com.sun.star.table import XTableCharts
-from com.sun.star.util import XNumberFormats
 
 from unotools.component import Component
 from unotools.datatypes import Sequence
@@ -21,12 +19,6 @@ class ChartDocument(Component):
 
     def __init__(self, chart_document: XChartDocument):
         self.raw = chart_document
-
-    def set_diagram(self, diagram: XDiagram):
-        self.raw.setDiagram(diagram)
-
-    def get_diagram(self) -> XDiagram:
-        return self.raw.getDiagram()
 
 
 class TableChart(Component):
@@ -132,9 +124,6 @@ class Calc(Component):
 
     def get_sheet_by_name(self, name: str) -> Spreadsheet:
         return Spreadsheet(self.get_by_name(self.sheets, name))
-
-    def get_number_formats(self) -> XNumberFormats:
-        return self.raw.getNumberFormats()
 
     def insert_sheets_new_by_name(self, name: str, position: int):
         self.sheets.insertNewByName(name, position)

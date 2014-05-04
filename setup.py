@@ -6,7 +6,7 @@ from setuptools import setup
 VERSION = '0.3.0'
 
 try:
-    import pypandoc  
+    import pypandoc
     LONG_DESCRIPTION = '\n'.join([
         pypandoc.convert('README.md', 'rst'),
         pypandoc.convert('CHANGELOG.md', 'rst'),

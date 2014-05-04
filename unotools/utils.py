@@ -25,6 +25,24 @@ def set_kwargs(obj: object, kwargs: dict):
             setattr(obj, key.title(), value)
 
 
+def convert_lowercase_to_camecase(name):
+    """
+    >>> convert_lowercase_to_camecase('')
+    ''
+    >>> convert_lowercase_to_camecase('close')
+    'close'
+    >>> convert_lowercase_to_camecase('get_title')
+    'getTitle'
+    >>> convert_lowercase_to_camecase('set_array_value')
+    'setArrayValue'
+    >>> convert_lowercase_to_camecase('getURL')
+    'getURL'
+    """
+    tokens = name.split('_')
+    first, rest = tokens[0], tokens[1:]
+    return first + ''.join(i.title() for i in rest)
+
+
 def get_file_list(path: str) -> str:
     for root, dirs, files in os.walk(path):
         for filename in files:

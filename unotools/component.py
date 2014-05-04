@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from pprint import pprint
+
 from com.sun.star.lang import XComponent
 from com.sun.star.uno import XComponentContext
-from com.sun.star.uno import XInterface
 
 from unotools.datatypes import Sequence
+from unotools.utils import convert_lowercase_to_camecase
 
 
 class Component:
@@ -16,17 +18,16 @@ class Component:
         loader = context.load_component_from_url
         self.raw = loader(self.URL, target_frame_name, search_flags, arguments)
 
-    def close(self):
-        self.raw.close(True)
+    def __getattr__(self, name: str) -> object:
+        if self.raw is not None:
+            return getattr(self.raw, convert_lowercase_to_camecase(name))
+        raise AttributeError
+
+    def _show_attributes(self):
+        pprint(dir(self.raw))
 
     def as_raw(self) -> XComponent:
         return self.raw
-
-    def get_string(self) -> str:
-        return self.raw.getString()
-
-    def set_string(self, text: str):
-        self.raw.setString(text)
 
     def get_by_index(self, obj: object, index: int) -> object:
         return obj.getByIndex(index)
@@ -36,12 +37,6 @@ class Component:
 
     def get_count(self, obj: object) -> int:
         return obj.getCount()
-
-    def get_title(self):
-        return self.raw.getTitle()
-
-    def create_instance(self, name: str) -> XInterface:
-        return self.raw.createInstance(name)
 
     def store_as_url(self, url: str, *values):
         self.raw.storeAsURL(url, self._get_property_values(*values))

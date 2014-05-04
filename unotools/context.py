@@ -80,7 +80,7 @@ class LocalContext(unohelper.Base):
         set_kwargs(struct, kwargs)
         return struct
 
-    def make_point(x: int, y: int) -> XInterface:
+    def make_point(self, x: int, y: int) -> XInterface:
         kwargs = self._get_kwargs('make_point', locals())
         return self.make_struct_data('com.sun.star.awt.Point', **kwargs)
 
