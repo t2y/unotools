@@ -2,9 +2,7 @@
 import functools
 import glob
 import os
-from os.path import join as pathjoin, realpath
-
-import pyuno
+from os.path import join as pathjoin
 
 
 def cached_property(func: callable) -> property:
@@ -52,19 +50,3 @@ def search_file(path: str, name: str) -> str:
     for root, dirs, files in os.walk(path):
         for file_path in glob.glob(os.path.join(root, name)):
             yield file_path
-
-
-def convert_path_to_url(path: str) -> str:
-    """
-    >>> convert_path_to_url('/var/tmp/libreoffice')
-    'file:///var/tmp/libreoffice'
-    """
-    return pyuno.systemPathToFileUrl(realpath(path))
-
-
-def convert_url_to_path(url: str) -> str:
-    """
-    >>> convert_url_to_path('file:///var/tmp/libreoffice')
-    '/var/tmp/libreoffice'
-    """
-    return pyuno.fileUrlToSystemPath(url)

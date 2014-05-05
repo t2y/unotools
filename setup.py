@@ -19,7 +19,7 @@ if sys.version_info < (3, 4):
     REQUIRES.append('singledispatch')
 
 CLASSIFIERS = [
-    'Development Status :: 4 - Beta',
+    'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: POSIX',

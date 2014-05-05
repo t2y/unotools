@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from os.path import realpath
+
 import uno
 import unohelper
-from uno import Any
+import pyuno
 from com.sun.star.bridge import XUnoUrlResolver
 from com.sun.star.frame import XDesktop
 from com.sun.star.lang import XComponent
@@ -63,32 +65,32 @@ class ContextBase(Base, unohelper.Base):
     def document(self, context) -> XComponent:
         return self.create_desktop(context).getCurrentComponent()
 
-    def create_struct(self, type_name: str) -> Any:
+    def create_struct(self, type_name: str) -> uno.Any:
         rv, struct = self.core_reflection.forName(type_name).createObject(None)
         return struct
 
-    def make_struct_data(self, type_name: str, **kwargs) -> Any:
+    def make_struct_data(self, type_name: str, **kwargs) -> uno.Any:
         struct = self.create_struct(type_name)
         set_kwargs(struct, kwargs)
         return struct
 
-    def make_point(self, x: int, y: int) -> Any:
+    def make_point(self, x: int, y: int) -> uno.Any:
         kwargs = self._get_kwargs('make_point', locals())
         return self.make_struct_data('com.sun.star.awt.Point', **kwargs)
 
     def make_property_value(self, name: str=None, value: str=None,
                             handle: int=None, state: object=None
-                            ) -> Any:
+                            ) -> uno.Any:
         type_name = 'com.sun.star.beans.PropertyValue'
         kwargs = self._get_kwargs('make_property_value', locals())
         return self.make_struct_data(type_name, **kwargs)
 
     def make_rectangle(self, x: int, y: int, width: int, height: int
-                       ) -> Any:
+                       ) -> uno.Any:
         kwargs = self._get_kwargs('make_rectangle', locals())
         return self.make_struct_data('com.sun.star.awt.Rectangle', **kwargs)
 
-    def make_size(self, width: int, height: int) -> Any:
+    def make_size(self, width: int, height: int) -> uno.Any:
         kwargs = self._get_kwargs('make_size', locals())
         return self.make_struct_data('com.sun.star.awt.Size', **kwargs)
 
@@ -129,3 +131,45 @@ class LoadingComponentBase(ComponentBase):
         self.raw = self.desktop.loadComponentFromURL(self.URL,
                                                      target_frame_name,
                                                      search_flags, arguments)
+
+
+# alias
+def constant(name: str) -> object:
+    """
+    >>> constant('com.sun.star.util.NumberFormat.DATE')
+    2
+    """
+    return pyuno.getConstantByName(name)
+
+
+def unotype(name: str) -> uno.Type:
+    """
+    >>> unotype('com.sun.star.uno.XInterface') # doctest: +NORMALIZE_WHITESPACE
+    <Type instance com.sun.star.uno.XInterface
+        (<uno.Enum com.sun.star.uno.TypeClass ('INTERFACE')>)>
+    """
+    return pyuno.getTypeByName(name)
+
+
+def unoclass(name: str) -> type:
+    """
+    >>> unoclass('com.sun.star.text.XText')
+    <class 'uno.com.sun.star.text.XText'>
+    """
+    return pyuno.getClass(name)
+
+
+def convert_path_to_url(path: str) -> str:
+    """
+    >>> convert_path_to_url('/var/tmp/libreoffice')
+    'file:///var/tmp/libreoffice'
+    """
+    return pyuno.systemPathToFileUrl(realpath(path))
+
+
+def convert_url_to_path(url: str) -> str:
+    """
+    >>> convert_url_to_path('file:///var/tmp/libreoffice')
+    '/var/tmp/libreoffice'
+    """
+    return pyuno.fileUrlToSystemPath(url)
