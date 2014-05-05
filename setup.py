@@ -42,5 +42,5 @@ setup(
     platforms=['unix', 'linux', 'osx'],
     packages=['unotools'],
     install_requires=REQUIRES,
-    tests_require=['tox', 'pytest', 'pytest-pep8'],
+    tests_require=['tox', 'pytest', 'pytest-pep8', 'pytest-flakes'],
 )
