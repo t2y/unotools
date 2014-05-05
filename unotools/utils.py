@@ -4,7 +4,6 @@ import glob
 import os
 from os.path import join as pathjoin, realpath
 
-import uno
 import pyuno
 
 

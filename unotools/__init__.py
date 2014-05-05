@@ -8,8 +8,6 @@ try:
 except ImportError:  # under 3.3
     from singledispatch import singledispatch
 
-import uno
-
 from unotools.context import LocalContext, ScriptContext
 from unotools.errors import ArgumentError, ConnectionError
 
