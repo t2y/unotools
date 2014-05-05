@@ -41,6 +41,7 @@ setup(
     license='Apache License 2.0',
     platforms=['unix', 'linux', 'osx'],
     packages=['unotools'],
+    include_package_data=True,
     install_requires=REQUIRES,
     tests_require=['tox', 'pytest', 'pytest-pep8', 'pytest-flakes'],
 )

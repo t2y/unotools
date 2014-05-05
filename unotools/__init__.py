@@ -58,7 +58,7 @@ def parse_argument(argv: list):
     >>> argv = '-s server -p 8080 -a tcpNoDelay=1'.split()
     >>> parse_argument(argv)  # doctest: +NORMALIZE_WHITESPACE
     Namespace(datadir=None, encoding='utf-8', host='server',
-              option='tcpNoDelay=1', outputdir=None, pipe=None, port=8080,
+              option='tcpNoDelay=1', outputdir='.', pipe=None, port=8080,
               verbose=False)
     """
     def validate_directory_existence(args):
@@ -68,7 +68,7 @@ def parse_argument(argv: list):
 
     parser = argparse.ArgumentParser()
     parser.set_defaults(encoding='utf-8', host='localhost', datadir=None,
-                        outputdir=None, option=None, pipe=None, port=8100,
+                        outputdir='.', option=None, pipe=None, port=8100,
                         verbose=False)
     parser.add_argument('-a', '--option', dest='option',
                         metavar='OPTION', help='set option')
