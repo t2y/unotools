@@ -3,9 +3,9 @@
 Python libraries for interacting with OpenOffice.org/LibreOffice using the "UNO bridge".
 
 
-## how to install
+## How to install
 
-On Ubuntu 14.04 
+### On Ubuntu 14.04 
 
 Install libreoffice, uno library and python3:
 
@@ -28,7 +28,7 @@ Install unotools from PyPI:
 
     (tmp3)$ pip install unotools
 
-## how to use
+## How to use
 
 Startup libreoffice:
 
