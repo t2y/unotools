@@ -1,40 +1,32 @@
 # -*- coding: utf-8 -*-
 from operator import methodcaller
 
+import uno  # pragma: no flakes
 from com.sun.star.awt import Rectangle
-from com.sun.star.chart import XChartDocument
 from com.sun.star.sheet import XCellRangeAddressable
-from com.sun.star.sheet import XSpreadsheet
-from com.sun.star.sheet import XSpreadsheets
 from com.sun.star.table import CellRangeAddress
 from com.sun.star.table import XCellRange
-from com.sun.star.table import XTableChart
-from com.sun.star.table import XTableCharts
 
-from unotools.component import Component
+from unotools.unohelper import ComponentBase
+from unotools.unohelper import LoadingComponentBase
 from unotools.datatypes import Sequence
 
 
-class ChartDocument(Component):
-
-    def __init__(self, chart_document: XChartDocument):
-        self.raw = chart_document
+class ChartDocument(ComponentBase):
+    pass
 
 
-class TableChart(Component):
-
-    def __init__(self, chart: XTableChart):
-        self.raw = chart
+class TableChart(ComponentBase):
 
     def get_embedded_object(self) -> ChartDocument:
-        return ChartDocument(self.raw.getEmbeddedObject())
+        return ChartDocument(self.context, self.raw.getEmbeddedObject())
 
 
-class Spreadsheet(Component):
+class TableCharts(ComponentBase):
+    pass
 
-    # sheet operation
-    def __init__(self, sheet: XSpreadsheet):
-        self.raw = sheet
+
+class Spreadsheet(ComponentBase):
 
     def set_rows_cell_data(self, x: int, y: int, data: list, method_name: str):
         for datum in data:
@@ -86,13 +78,12 @@ class Spreadsheet(Component):
                           ) -> XCellRangeAddressable:
         return cell_range.getRangeAddress()
 
-    # charts operation
     @property
-    def charts(self) -> XTableCharts:
-        return self.raw.getCharts()
+    def charts(self) -> TableCharts:
+        return TableCharts(self.context, self.raw.getCharts())
 
     def get_charts_count(self) -> int:
-        return self.get_count(self.charts)
+        return self.charts.getCount()
 
     def add_charts_new_by_name(self, name: str,
                                rect: Rectangle, ranges: CellRangeAddress,
@@ -101,29 +92,32 @@ class Spreadsheet(Component):
                                  column_headers, row_headers)
 
     def get_chart_by_index(self, index: int) -> TableChart:
-        return TableChart(self.get_by_index(self.charts, index))
+        return TableChart(self.context, self.charts.getByIndex(index))
 
     def get_chart_by_name(self, name: str) -> TableChart:
-        return TableChart(self.get_by_name(self.charts, name))
+        return TableChart(self.context, self.charts.getByName(name))
 
 
-class Calc(Component):
+class Spreadsheets(ComponentBase):
+    pass
+
+
+class Calc(LoadingComponentBase):
 
     URL = 'private:factory/scalc'
 
-    # sheets operation
     @property
-    def sheets(self) -> XSpreadsheets:
-        return self.raw.getSheets()
+    def sheets(self) -> Spreadsheets:
+        return Spreadsheets(self.context, self.raw.getSheets())
 
     def get_sheets_count(self) -> int:
-        return self.get_count(self.sheets)
+        return self.sheets.getCount()
 
     def get_sheet_by_index(self, index: int) -> Spreadsheet:
-        return Spreadsheet(self.get_by_index(self.sheets, index))
+        return Spreadsheet(self.context, self.sheets.getByIndex(index))
 
     def get_sheet_by_name(self, name: str) -> Spreadsheet:
-        return Spreadsheet(self.get_by_name(self.sheets, name))
+        return Spreadsheet(self.context, self.sheets.getByName(name))
 
     def insert_sheets_new_by_name(self, name: str, position: int):
         self.sheets.insertNewByName(name, position)

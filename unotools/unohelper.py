@@ -1,0 +1,131 @@
+# -*- coding: utf-8 -*-
+import uno
+import unohelper
+from uno import Any
+from com.sun.star.bridge import XUnoUrlResolver
+from com.sun.star.frame import XDesktop
+from com.sun.star.lang import XComponent
+from com.sun.star.reflection import XIdlReflection
+from com.sun.star.uno import XComponentContext
+from com.sun.star.uno import XInterface
+
+from unotools.datatypes import Sequence
+from unotools.utils import cached_property
+from unotools.utils import convert_lowercase_to_camecase
+from unotools.utils import get_annotation_to_kwargs
+from unotools.utils import set_kwargs
+
+
+class Base:
+
+    def __getattr__(self, name: str) -> XInterface:
+        if self.raw is not None:
+            return getattr(self.raw, convert_lowercase_to_camecase(name))
+        raise AttributeError
+
+    def _show_attributes(self):
+        from pprint import pprint
+        pprint(dir(self.raw))
+
+
+class ContextBase(Base, unohelper.Base):
+
+    def __init__(self, context=None):
+        self.raw = uno.getComponentContext() if context is None else context
+        self.service_manager = self.raw.getServiceManager()
+        self.core_reflection = self.create_core_reflection(self.raw)
+
+    def as_raw(self) -> XComponentContext:
+        return self.raw
+
+    def create_instance(self, name: str) -> XInterface:
+        return self.service_manager.createInstance(name)
+
+    def create_instance_with_context(self, name: str,
+                                     context: XComponentContext
+                                     ) -> XInterface:
+        return self.service_manager.createInstanceWithContext(name, context)
+
+    def create_resolver(self, context: XComponentContext) -> XUnoUrlResolver:
+        service_name = 'com.sun.star.bridge.UnoUrlResolver'
+        return self.create_instance_with_context(service_name, context)
+
+    def create_core_reflection(self, context: XComponentContext
+                               ) -> XIdlReflection:
+        service_name = 'com.sun.star.reflection.CoreReflection'
+        return self.create_instance_with_context(service_name, context)
+
+    def create_desktop(self, context: XComponentContext) -> XDesktop:
+        service_name = 'com.sun.star.frame.Desktop'
+        return self.create_instance_with_context(service_name, context)
+
+    @cached_property
+    def document(self, context) -> XComponent:
+        return self.create_desktop(context).getCurrentComponent()
+
+    def create_struct(self, type_name: str) -> Any:
+        rv, struct = self.core_reflection.forName(type_name).createObject(None)
+        return struct
+
+    def make_struct_data(self, type_name: str, **kwargs) -> Any:
+        struct = self.create_struct(type_name)
+        set_kwargs(struct, kwargs)
+        return struct
+
+    def make_point(self, x: int, y: int) -> Any:
+        kwargs = self._get_kwargs('make_point', locals())
+        return self.make_struct_data('com.sun.star.awt.Point', **kwargs)
+
+    def make_property_value(self, name: str=None, value: str=None,
+                            handle: int=None, state: object=None
+                            ) -> Any:
+        type_name = 'com.sun.star.beans.PropertyValue'
+        kwargs = self._get_kwargs('make_property_value', locals())
+        return self.make_struct_data(type_name, **kwargs)
+
+    def make_rectangle(self, x: int, y: int, width: int, height: int
+                       ) -> Any:
+        kwargs = self._get_kwargs('make_rectangle', locals())
+        return self.make_struct_data('com.sun.star.awt.Rectangle', **kwargs)
+
+    def make_size(self, width: int, height: int) -> Any:
+        kwargs = self._get_kwargs('make_size', locals())
+        return self.make_struct_data('com.sun.star.awt.Size', **kwargs)
+
+    def _get_kwargs(self, func_name: str, values: dict) -> dict:
+        return get_annotation_to_kwargs(self.__class__, func_name, values)
+
+
+class ComponentBase(Base):
+
+    def __init__(self, context: XComponentContext, component: XComponent):
+        self.context = context
+        self.raw = component
+
+    def as_raw(self) -> XComponent:
+        return self.raw
+
+    def store_as_url(self, url: str, *values):
+        self.raw.storeAsURL(url, self._get_property_values(*values))
+
+    def store_to_url(self, url: str, *values):
+        self.raw.storeToURL(url, self._get_property_values(*values))
+
+    def _get_property_values(self, *values) -> Sequence:
+        if len(values) == 1 and values[0] is None:
+            return Sequence()
+        else:
+            return Sequence(self.context.make_property_value(*values))
+
+
+class LoadingComponentBase(ComponentBase):
+
+    def __init__(self, context: XComponentContext,
+                 target_frame_name: str='_blank',
+                 search_flags: int=0,
+                 arguments: tuple=()):
+        self.context = context
+        self.desktop = self.context.create_desktop(self.context.raw)
+        self.raw = self.desktop.loadComponentFromURL(self.URL,
+                                                     target_frame_name,
+                                                     search_flags, arguments)

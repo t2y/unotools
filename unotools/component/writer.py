@@ -2,16 +2,21 @@
 from com.sun.star.text import XText
 from com.sun.star.text import XTextRange
 
-from unotools.component import Component
+from unotools.unohelper import ComponentBase
+from unotools.unohelper import LoadingComponentBase
 
 
-class Writer(Component):
+class Text(ComponentBase):
+    pass
+
+
+class Writer(LoadingComponentBase):
 
     URL = 'private:factory/swriter'
 
     @property
     def text(self) -> XText:
-        return self.component.getText()
+        return Text(self.context, self.raw.getText())
 
     def get_start(self) -> XTextRange:
         return self.text.getStart()
