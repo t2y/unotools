@@ -46,7 +46,7 @@ def calc_sample(args, context):
     sheets_count = calc.get_sheets_count()
     new_sheets_data = ['sales', 'benefit', 'budget']
     calc.insert_multisheets_new_by_name(new_sheets_data, sheets_count)
-    calc.get_sheet_by_name('budget').Name = 'cost'
+    calc.get_sheet_by_name('budget').set_name('cost')
 
     base_path = convert_path_to_url(pathjoin(args.outputdir, 'sample'))
     calc.store_to_url(base_path + '.xls', 'FilterName', 'MS Excel 97')

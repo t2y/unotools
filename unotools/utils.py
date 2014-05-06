@@ -22,7 +22,7 @@ def set_kwargs(obj: object, kwargs: dict):
             setattr(obj, key.title(), value)
 
 
-def convert_lowercase_to_camecase(name):
+def convert_lowercase_to_camecase(name: str) -> str:
     """
     >>> convert_lowercase_to_camecase('')
     ''
