@@ -62,8 +62,13 @@ class ContextBase(Base, unohelper.Base):
         return self.create_instance_with_context(service_name, context)
 
     @cached_property
-    def document(self, context) -> XComponent:
+    def document(self, context: XComponentContext) -> XComponent:
         return self.create_desktop(context).getCurrentComponent()
+
+    def create_simple_file_access(self, context: XComponentContext
+                                  ) -> XIdlReflection:
+        service_name = 'com.sun.star.ucb.SimpleFileAccess'
+        return self.create_instance_with_context(service_name, context)
 
     def create_struct(self, type_name: str) -> uno.Any:
         rv, struct = self.core_reflection.forName(type_name).createObject(None)
@@ -123,12 +128,14 @@ class ComponentBase(Base):
 class LoadingComponentBase(ComponentBase):
 
     def __init__(self, context: XComponentContext,
+                 url: str=None,
                  target_frame_name: str='_blank',
                  search_flags: int=0,
                  arguments: tuple=()):
         self.context = context
         self.desktop = self.context.create_desktop(self.context.raw)
-        self.raw = self.desktop.loadComponentFromURL(self.URL,
+        self.url = url if url is not None else self.URL
+        self.raw = self.desktop.loadComponentFromURL(self.url,
                                                      target_frame_name,
                                                      search_flags, arguments)
 
