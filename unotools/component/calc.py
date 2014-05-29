@@ -28,6 +28,10 @@ class CellRange(ComponentBase):
     pass
 
 
+class Cell(ComponentBase):
+    pass
+
+
 class Spreadsheet(ComponentBase):
 
     def set_rows_cell_data(self, x: int, y: int, data: list, method_name: str):
@@ -68,6 +72,9 @@ class Spreadsheet(ComponentBase):
 
     def set_columns_formula(self, x: int, y: int, data: list):
         self.set_columns_cell_data(x, y, data, 'setFormula')
+
+    def get_cell_by_position(self, x: int, y: int) -> Cell:
+        return Cell(self.context, self.raw.getCellByPosition(x, y))
 
     def get_cell_range_by_name(self, range_: str) -> CellRange:
         return CellRange(self.context, self.raw.getCellRangeByName(range_))
