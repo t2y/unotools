@@ -3,9 +3,7 @@ from operator import methodcaller
 
 import uno  # pragma: no flakes
 from com.sun.star.awt import Rectangle
-from com.sun.star.sheet import XCellRangeAddressable
 from com.sun.star.table import CellRangeAddress
-from com.sun.star.table import XCellRange
 
 from unotools.unohelper import ComponentBase
 from unotools.unohelper import LoadingComponentBase
@@ -23,6 +21,10 @@ class TableChart(ComponentBase):
 
 
 class TableCharts(ComponentBase):
+    pass
+
+
+class CellRange(ComponentBase):
     pass
 
 
@@ -67,16 +69,13 @@ class Spreadsheet(ComponentBase):
     def set_columns_formula(self, x: int, y: int, data: list):
         self.set_columns_cell_data(x, y, data, 'setFormula')
 
-    def get_cell_range_by_name(self, range_: str) -> XCellRange:
-        return self.raw.getCellRangeByName(range_)
+    def get_cell_range_by_name(self, range_: str) -> CellRange:
+        return CellRange(self.context, self.raw.getCellRangeByName(range_))
 
     def get_cell_range_by_position(self, left: int, top: int, right: int,
-                                   bottom: int) -> XCellRange:
-        return self.raw.getCellRangeByPosition(left, top, right, bottom)
-
-    def get_range_address(self, cell_range: XCellRange
-                          ) -> XCellRangeAddressable:
-        return cell_range.getRangeAddress()
+                                   bottom: int) -> CellRange:
+        raw = self.raw.getCellRangeByPosition(left, top, right, bottom)
+        return CellRange(self.context, raw)
 
     @property
     def charts(self) -> TableCharts:
