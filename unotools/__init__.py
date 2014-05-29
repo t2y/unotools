@@ -57,7 +57,7 @@ def parse_argument(argv: list):
     """
     >>> argv = '-s server -p 8080 -a tcpNoDelay=1'.split()
     >>> parse_argument(argv)  # doctest: +NORMALIZE_WHITESPACE
-    Namespace(datadir=None, encoding='utf-8', file_=None, host='server',
+    Namespace(datadirs=[], encoding='utf-8', file_=None, host='server',
               option='tcpNoDelay=1', outputdir='.', pipe=None, port=8080,
               verbose=False)
     """
@@ -67,16 +67,16 @@ def parse_argument(argv: list):
                 if path is not None and not validate_func(path):
                     raise ArgumentError('"{}" is not found'.format(path))
         validate([args.file_], isfile)
-        validate([args.datadir, args.outputdir], isdir)
+        validate(args.datadirs + [args.outputdir], isdir)
 
     parser = argparse.ArgumentParser()
-    parser.set_defaults(datadir=None, encoding='utf-8', file_=None,
+    parser.set_defaults(datadirs=[], encoding='utf-8', file_=None,
                         host='localhost', option=None, outputdir='.',
                         pipe=None, port=8100, verbose=False)
     parser.add_argument('-a', '--option', dest='option',
                         metavar='OPTION', help='set option')
-    parser.add_argument('-d', '--datadir', dest='datadir',
-                        metavar='DATADIR', help='set data directory')
+    parser.add_argument('-d', '--datadirs', dest='datadirs', nargs='*',
+                        metavar='DATADIRS', help='set data directories')
     parser.add_argument('-e', '--encoding', dest='encoding',
                         metavar='ENCODING',
                         help='set encoding. default is utf-8')
