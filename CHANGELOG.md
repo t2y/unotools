@@ -2,6 +2,11 @@
 ChangeLog
 =========
 
+0.3.2 (2014-06-07)
+------------------
+* added some classes for calc
+* changed data directory option of command line argument (-d, --datadirs) to be able to store multiple directories
+
 0.3.1 (2014-05-07)
 ------------------
 * added command line argument (-f, --file) to be able to read OpenDocument file

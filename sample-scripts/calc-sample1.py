@@ -16,7 +16,7 @@ def calc_sample(args, context):
     sheet = calc.get_sheet_by_index(0)
     sheet.set_columns_str(0, 0, ['Month', 'Sales', 'End Date'])
 
-    path = next(search_file(args.datadir, 'data1.csv'))
+    path = next(search_file(args.datadirs[0], 'data1.csv'))
     csv_file = CsvFile(path, has_header=True)
     for i, data in enumerate(csv_file.read(), 1):
         sheet.set_rows(0, i, data, csv_file.header)
@@ -28,10 +28,9 @@ def calc_sample(args, context):
     cell_range.NumberFormat = formats.getStandardFormat(format_date, locale)
 
     chart_cell_range = sheet.get_cell_range_by_name('A1:B13')
-    range_address = sheet.get_range_address(chart_cell_range)
     sheet.add_charts_new_by_name('Sales',
                 context.make_rectangle(8000, 1000, 16000, 10000),
-                range_address, True, True)
+                chart_cell_range.get_range_address(), True, True)
     chart = sheet.get_chart_by_name('Sales')
     chart_doc = chart.get_embedded_object()
 
