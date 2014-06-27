@@ -36,7 +36,7 @@ def convert_lowercase_to_camecase(name: str) -> str:
     'getURL'
     """
     tokens = name.split('_')
-    first, rest = tokens[0], tokens[1:]
+    first, *rest = tokens
     return first + ''.join(i.title() for i in rest)
 
 
