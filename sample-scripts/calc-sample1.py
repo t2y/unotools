@@ -3,11 +3,9 @@ import sys
 from os.path import join as pathjoin
 
 from unotools import Socket, connect
-from unotools.unohelper import constant
-from unotools.unohelper import convert_path_to_url
 from unotools.component.calc import Calc
-from unotools.component.writer import Writer
 from unotools.data.csv import CsvFile
+from unotools.unohelper import constant, convert_path_to_url
 from unotools.utils import search_file
 
 
@@ -48,6 +46,7 @@ def calc_sample(args, context):
     calc.get_sheet_by_name('budget').set_name('cost')
 
     base_path = convert_path_to_url(pathjoin(args.outputdir, 'sample'))
+    calc.store_to_url(base_path + '.ods', 'FilterName', 'calc8')
     calc.store_to_url(base_path + '.xls', 'FilterName', 'MS Excel 97')
     calc.store_to_url(base_path + '.csv',
                       'FilterName', 'Text - txt - csv (StarCalc)')
