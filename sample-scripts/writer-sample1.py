@@ -3,8 +3,8 @@ import sys
 from os.path import join as pathjoin
 
 from unotools import Socket, connect
-from unotools.unohelper import convert_path_to_url
 from unotools.component.writer import Writer
+from unotools.unohelper import convert_path_to_url
 
 
 def writer_sample(args, context):
@@ -13,6 +13,7 @@ def writer_sample(args, context):
     writer.set_string_to_start('hello\n')
 
     base_path = convert_path_to_url(pathjoin(args.outputdir, 'sample'))
+    writer.store_to_url(base_path + '.odt', 'FilterName', 'writer8')
     writer.store_to_url(base_path + '.doc', 'FilterName', 'MS Word 97')
     writer.store_to_url(base_path + '-writer.pdf',
                         'FilterName', 'writer_pdf_Export')
