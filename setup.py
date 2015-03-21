@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 
 
-VERSION = '0.3.2'
+VERSION = '0.3.3'
 
 try:
     import pypandoc
@@ -19,12 +19,18 @@ if sys.version_info < (3, 4):
     REQUIRES.append('singledispatch')
 
 CLASSIFIERS = [
-    'Development Status :: 3 - Alpha',
+    'License :: OSI Approved :: Apache Software License',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: POSIX',
     'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: Implementation :: CPython',
     'Topic :: Software Development',
+    'Topic :: Software Development :: Libraries',
     'Topic :: Office/Business :: Office Suites',
 ]
 
