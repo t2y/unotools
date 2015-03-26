@@ -15,6 +15,10 @@ There're other tools.
 * [pyoo](https://pypi.python.org/pypi/pyoo)
 * [unoconv](https://pypi.python.org/pypi/unoconv)
 
+Here are some examples of projects using unotools.
+
+* [odtmanagement](https://bitbucket.org/bastien_roques/odtmanagement)
+
 
 ## How to install
 
@@ -212,3 +216,20 @@ If you want to read OpenDocument on file system, like this.
 >>> writer = Writer(context, convert_path_to_url('./test1.odt'))
 ```
 
+If you want to pass *PropertyValue* described in
+[loadComponentFromURL Method Options](https://wiki.openoffice.org/wiki/Documentation/BASIC_Guide/StarDesktop),
+*context* object has a utility method to create it.
+Also multiple property values can be passed if needed.
+
+```python
+>>> pv1 = context.make_property_value('Hidden', True)
+>>> pv1
+(com.sun.star.beans.PropertyValue){
+    Name = (string)"Hidden",
+    Handle = (long)0x0,
+    Value = (any){ (boolean)true },
+    State = (com.sun.star.beans.PropertyState)DIRECT_VALUE
+}
+>>> pv2 = context.make_property_value(..., ...)
+>>> w = Writer(context, arguments=(pv1, pv2))
+```
